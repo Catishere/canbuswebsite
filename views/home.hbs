@@ -1,0 +1,45 @@
+<h2>Hello {{name}}!<h2>
+
+<script>
+  function subForm (){
+      $.ajax({
+          url:'/form',
+          type:'post',
+          data:$('#testForm').serialize()
+      });
+  }
+
+  function resetCan(){
+      $.ajax({
+          url:'/resetCan',
+          type:'post',
+          success: function(data, status, xhttp) {
+            if (data) {
+              $("#dumplog").html(data);
+            }
+          }
+      });
+  }
+
+  function dump(){
+      $.ajax({
+          url:'/dump',
+          type:'post',
+          success: function(data, status, xhttp) {
+            if (data) {
+              $("#dumplog").html(data);
+            }
+          }
+      });
+  }
+</script>
+
+<form action="/form" method="POST" id="testForm">
+  Can Send:<br>
+  <input type="text" id="cansignal" name="cansignal">
+  <button type="button" onclick="subForm()">Send</button>
+  <button type="button" onclick="resetCan()">Stop Cansend</button>
+  <button type="button" onclick="dump()">Can Dump</button><br>
+  <div id="dumplog"></div>
+
+</form>
