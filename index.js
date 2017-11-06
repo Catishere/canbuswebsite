@@ -1,10 +1,19 @@
 const path = require('path');
 const express = require('express');
-const shell = require('shelljs');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
-
 const app = express();
+const can = require('socketcan');
+
+var channel = can.createRawChannel("can0", true);
+
+// Log any message
+channel.addListener("onMessage", function(msg) { console.log(msg); } );
+
+// Reply any message
+channel.addListener("onMessage", channel.send, channel);
+
+channel.start();
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'www')));
@@ -21,16 +30,20 @@ const port = 3000;
 
 app.post('/form', function (req, res) {
   var cansignal = req.body.cansignal;
-  shell.exec("cansend can0 " + cansignal);
+});
+
+app.post('/connect', function (req, res) {
+  ssh.connect({
+    host: 'localhost',
+    username: 'pi',
+    privateKey: '/home/pi/.ssh/id_rsa'
+  })
 });
 
 app.post('/resetCan', function (req, res) {
-  shell.exec("sudo ip link set can0 down");
-  shell.exec("sudo ip link set can0 up");
 });
 
 app.post('/dump', function (req, res) {
-  res.send(shell.exec("candump can0"));
 });
 
 app.get('/', (req, res) => {

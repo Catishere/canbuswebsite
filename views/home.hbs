@@ -1,5 +1,5 @@
 <h2>Hello {{name}}!<h2>
-
+<div id="status"></div>
 <script>
   function subForm (){
       $.ajax({
@@ -32,9 +32,22 @@
           }
       });
   }
+
+  function connect(){
+      $.ajax({
+          url:'/connect',
+          type:'post',
+          success: function(data, status, xhttp) {
+            if (data) {
+              $("#status").html(data);
+            }
+          }
+      });
+  }
 </script>
 
 <form action="/form" method="POST" id="testForm">
+  <button type="button" onclick="connect()">Connect</button>
   Can Send:<br>
   <input type="text" id="cansignal" name="cansignal">
   <button type="button" onclick="subForm()">Send</button>
